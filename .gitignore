@@ -1,0 +1,21 @@
+# Binaries and executables
+v8-go-integration-example/server
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binaries and output files
+*.test
+*.out
+*.prof
+
+# Editor / IDE settings
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store

@@ -1,0 +1,15 @@
+# Compiled server binary
+server
+
+# Executables
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binaries
+*.test
+
+# OS metadata
+.DS_Store

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V8 + Go Integration Playground</title>
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <span class="badge-go">Go</span>
+                <span class="connector">+</span>
+                <span class="badge-v8">V8</span>
+            </div>
+            <h1>V8 Engine + Go Integration</h1>
+            <p class="subtitle">Secure Sandboxed Javascript Execution with Decoupled Cgo Interfaces</p>
+        </header>
+
+        <!-- Main Workspace Grid -->
+        <main class="workspace">
+            <!-- Left Side: Script Editor -->
+            <section class="editor-card glass">
+                <div class="card-header">
+                    <h2>Javascript Editor</h2>
+                    <div class="templates">
+                        <button class="tmpl-btn active" data-template="math">Basic Math</button>
+                        <button class="tmpl-btn" data-template="gocompute">Go Callback (Math)</button>
+                        <button class="tmpl-btn" data-template="gofetch">Go Callback (Fetch)</button>
+                        <button class="tmpl-btn" data-template="error">JS Error Handler</button>
+                    </div>
+                </div>
+                <div class="editor-wrapper">
+                    <div class="line-numbers" id="line-numbers"></div>
+                    <textarea id="code-editor" spellcheck="false" autocomplete="off" placeholder="Write Javascript here..."></textarea>
+                </div>
+                <div class="card-actions">
+                    <span class="shortcut-tip">Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to run</span>
+                    <button id="run-btn" class="btn-primary">
+                        <span>Execute Script</span>
+                        <div class="spinner" id="btn-spinner"></div>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Right Side: Console and Results -->
+            <section class="results-card glass">
+                <div class="card-header">
+                    <h2>Execution Status</h2>
+                    <span id="status-badge" class="badge idle">Idle</span>
+                </div>
+                
+                <!-- Performance Metadata -->
+                <div class="meta-row">
+                    <div class="meta-box">
+                        <span class="meta-label">Execution Time</span>
+                        <span class="meta-value" id="execution-time">-</span>
+                    </div>
+                    <div class="meta-box">
+                        <span class="meta-label">Sandbox Engine</span>
+                        <span class="meta-value text-v8">V8 Isolates</span>
+                    </div>
+                    <div class="meta-box">
+                        <span class="meta-label">Interface Mode</span>
+                        <span class="meta-value text-decoupled">Decoupled</span>
+                    </div>
+                </div>
+
+                <!-- Console Logs -->
+                <div class="console-box">
+                    <div class="console-header">
+                        <span>Console Output (via Go callback logs)</span>
+                        <button id="clear-console-btn">Clear</button>
+                    </div>
+                    <div class="console-content" id="console-logs">
+                        <div class="console-placeholder">Waiting for execution...</div>
+                    </div>
+                </div>
+
+                <!-- Evaluated Result -->
+                <div class="result-box">
+                    <div class="result-header">Returned Value (JS Final Value)</div>
+                    <pre class="result-content" id="returned-value">undefined</pre>
+                </div>
+            </section>
+        </main>
+
+        <!-- Dynamic Integration Flow Visualization -->
+        <section class="flow-card glass">
+            <h2>Integration Data-Flow Pipeline</h2>
+            <p class="flow-desc">Watch the execution travel through the components in real-time</p>
+            
+            <div class="flow-diagram">
+                <div class="flow-node" id="node-web">
+                    <div class="node-icon">💻</div>
+                    <div class="node-title">Web Client</div>
+                    <div class="node-sub">HTML/CSS/JS UI</div>
+                </div>
+                
+                <div class="flow-arrow" id="arrow-web-server">➔</div>
+
+                <div class="flow-node" id="node-server">
+                    <div class="node-icon">📡</div>
+                    <div class="node-title">Go Server</div>
+                    <div class="node-sub">HTTP Router</div>
+                </div>
+
+                <div class="flow-arrow" id="arrow-server-lib">➔</div>
+
+                <div class="flow-node" id="node-lib">
+                    <div class="node-icon">🔄</div>
+                    <div class="node-title">Go Interface</div>
+                    <div class="node-sub">ScriptRunner (Decoupled)</div>
+                </div>
+
+                <div class="flow-arrow" id="arrow-lib-v8">➔</div>
+
+                <div class="flow-node" id="node-v8">
+                    <div class="node-icon">🚀</div>
+                    <div class="node-title">V8 Engine</div>
+                    <div class="node-sub">Cgo sandbox VM</div>
+                </div>
+
+                <div class="flow-arrow bidirectional hidden" id="arrow-v8-callback">⚡ Go Callback ⚡</div>
+
+                <div class="flow-arrow" id="arrow-v8-lib">➔</div>
+
+                <div class="flow-node" id="node-back">
+                    <div class="node-icon">🏁</div>
+                    <div class="node-title">Response</div>
+                    <div class="node-sub">JSON Payload</div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
