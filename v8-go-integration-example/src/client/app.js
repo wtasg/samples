@@ -66,7 +66,8 @@ const executionTime = document.getElementById('execution-time');
 const consoleLogs = document.getElementById('console-logs');
 const returnedValue = document.getElementById('returned-value');
 const clearConsoleBtn = document.getElementById('clear-console-btn');
-const templateBtns = document.querySelectorAll('.tmpl-btn');
+const editorTabsContainer = document.getElementById('editor-tabs');
+const newTabBtn = document.getElementById('new-tab-btn');
 
 // Flow Diagram Elements
 const flowNodes = {
@@ -84,12 +85,110 @@ const flowArrows = {
     v8Lib: document.getElementById('arrow-v8-lib'),
 };
 
-let activeTemplate = 'math';
+// Tabbed Workspace State
+let activeTab = 'math';
+let nextScratchId = 1;
 
-// Initialize Editor
-function initEditor() {
-    codeEditor.value = templates[activeTemplate];
+const tabContents = {
+    math: templates.math,
+    gocompute: templates.gocompute,
+    gofetch: templates.gofetch,
+    error: templates.error
+};
+
+const tabMeta = {
+    math: { title: 'Basic Math', closeable: false },
+    gocompute: { title: 'Go Callback (Math)', closeable: false },
+    gofetch: { title: 'Go Callback (Fetch)', closeable: false },
+    error: { title: 'JS Error Handler', closeable: false }
+};
+
+// Initialize Tabs UI
+function renderTabs() {
+    if (!editorTabsContainer) return;
+    editorTabsContainer.innerHTML = '';
+    
+    Object.keys(tabMeta).forEach(tabId => {
+        const meta = tabMeta[tabId];
+        const btn = document.createElement('button');
+        btn.className = `tmpl-btn ${activeTab === tabId ? 'active' : ''}`;
+        btn.dataset.tab = tabId;
+        
+        const titleSpan = document.createElement('span');
+        titleSpan.textContent = meta.title;
+        btn.appendChild(titleSpan);
+        
+        if (meta.closeable) {
+            const closeSpan = document.createElement('span');
+            closeSpan.className = 'tab-close';
+            closeSpan.innerHTML = '&times;';
+            closeSpan.title = 'Close editor tab';
+            closeSpan.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeTab(tabId);
+            });
+            btn.appendChild(closeSpan);
+        }
+        
+        btn.addEventListener('click', () => {
+            switchTab(tabId);
+        });
+        
+        editorTabsContainer.appendChild(btn);
+    });
+}
+
+// Switch Editor Tab
+function switchTab(tabId) {
+    if (activeTab === tabId) return;
+    // Save current content
+    tabContents[activeTab] = codeEditor.value;
+    
+    activeTab = tabId;
+    codeEditor.value = tabContents[tabId];
+    renderTabs();
     updateLineNumbers();
+    resetVisualFlow();
+}
+
+// Close Editor Tab
+function closeTab(tabId) {
+    if (!tabMeta[tabId] || !tabMeta[tabId].closeable) return;
+    
+    delete tabContents[tabId];
+    delete tabMeta[tabId];
+    
+    if (activeTab === tabId) {
+        const remainingKeys = Object.keys(tabMeta);
+        activeTab = remainingKeys[remainingKeys.length - 1];
+    }
+    
+    codeEditor.value = tabContents[activeTab];
+    renderTabs();
+    updateLineNumbers();
+    resetVisualFlow();
+}
+
+// Create New Blank Editor Tab
+function createNewTab() {
+    // Save current
+    tabContents[activeTab] = codeEditor.value;
+    
+    const tabId = `scratch-${nextScratchId}`;
+    const tabTitle = `Untitled ${nextScratchId}`;
+    nextScratchId++;
+    
+    tabContents[tabId] = `// ${tabTitle} - Code from scratch inside V8 isolate\n\nconsole.log("Running custom code...");\n\n"Hello World!";`;
+    tabMeta[tabId] = { title: tabTitle, closeable: true };
+    
+    activeTab = tabId;
+    codeEditor.value = tabContents[tabId];
+    renderTabs();
+    updateLineNumbers();
+    resetVisualFlow();
+    
+    // Focus the editor
+    codeEditor.focus();
 }
 
 // Update Line Numbers
@@ -104,18 +203,10 @@ codeEditor.addEventListener('scroll', () => {
     lineNumbers.scrollTop = codeEditor.scrollTop;
 });
 
-codeEditor.addEventListener('input', updateLineNumbers);
-
-// Template Button Listeners
-templateBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        templateBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeTemplate = btn.dataset.template;
-        codeEditor.value = templates[activeTemplate];
-        updateLineNumbers();
-        resetVisualFlow();
-    });
+// Update content cache as the user types
+codeEditor.addEventListener('input', () => {
+    tabContents[activeTab] = codeEditor.value;
+    updateLineNumbers();
 });
 
 // Clear console
@@ -268,8 +359,84 @@ function renderConsole(logs) {
     consoleLogs.scrollTop = consoleLogs.scrollHeight;
 }
 
+// Drag Resizing Pane logic
+const workspace = document.querySelector('.workspace');
+const dragbar = document.getElementById('dragbar');
+let isDragging = false;
+
+function initResize() {
+    if (!dragbar || !workspace) return;
+
+    dragbar.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        dragbar.classList.add('dragging');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        
+        const containerRect = workspace.getBoundingClientRect();
+        const containerWidth = containerRect.width;
+        
+        let offset = e.clientX - containerRect.left;
+        let percentage = (offset / containerWidth) * 100;
+        
+        // Impose constraints (e.g., 20% to 80%)
+        if (percentage < 20) percentage = 20;
+        if (percentage > 80) percentage = 80;
+        
+        workspace.style.gridTemplateColumns = `${percentage}% 10px ${100 - percentage}%`;
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging = false;
+            dragbar.classList.remove('dragging');
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+        }
+    });
+
+    // Touch Support for Mobile
+    dragbar.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        dragbar.classList.add('dragging');
+        document.body.style.userSelect = 'none';
+    });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        
+        const clientX = e.touches[0].clientX;
+        const containerRect = workspace.getBoundingClientRect();
+        const containerWidth = containerRect.width;
+        
+        let offset = clientX - containerRect.left;
+        let percentage = (offset / containerWidth) * 100;
+        
+        if (percentage < 20) percentage = 20;
+        if (percentage > 80) percentage = 80;
+        
+        workspace.style.gridTemplateColumns = `${percentage}% 10px ${100 - percentage}%`;
+    });
+
+    document.addEventListener('touchend', () => {
+        if (isDragging) {
+            isDragging = false;
+            dragbar.classList.remove('dragging');
+            document.body.style.userSelect = '';
+        }
+    });
+}
+
 // Event Listeners
 runBtn.addEventListener('click', runScript);
+
+if (newTabBtn) {
+    newTabBtn.addEventListener('click', createNewTab);
+}
 
 // Ctrl + Enter shortcut
 document.addEventListener('keydown', (e) => {
@@ -280,4 +447,11 @@ document.addEventListener('keydown', (e) => {
 });
 
 // Initialize on page load
-initEditor();
+function init() {
+    codeEditor.value = tabContents[activeTab];
+    renderTabs();
+    updateLineNumbers();
+    initResize();
+}
+
+init();

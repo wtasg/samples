@@ -49,11 +49,12 @@ body::before {
 }
 
 .container {
-    max-width: 1300px;
+    max-width: 100%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    padding: 0 1.5rem;
 }
 
 /* Header Styling */
@@ -125,15 +126,159 @@ header h1 {
 /* Workspace layout */
 .workspace {
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 1.5rem;
+    grid-template-columns: 1fr 10px 1fr;
+    gap: 0;
+    width: 100%;
+    align-items: stretch;
 }
 
 @media (max-width: 968px) {
     .workspace {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem;
+    }
+    .resizer {
+        display: none !important;
     }
 }
+
+/* Drag Splitter Resizer */
+.resizer {
+    width: 10px;
+    cursor: col-resize;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    transition: background 0.2s;
+    user-select: none;
+    z-index: 10;
+}
+
+.resizer:hover, .resizer.dragging {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.resizer-handle {
+    width: 4px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    transition: var(--transition);
+    position: relative;
+}
+
+.resizer-handle::before, .resizer-handle::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    left: 0;
+    transition: var(--transition);
+}
+
+.resizer-handle::before {
+    top: -10px;
+}
+
+.resizer-handle::after {
+    bottom: -10px;
+}
+
+.resizer:hover .resizer-handle,
+.resizer.dragging .resizer-handle {
+    background: var(--color-go);
+    box-shadow: 0 0 10px rgba(0, 173, 216, 0.6);
+}
+
+.resizer:hover .resizer-handle::before,
+.resizer:hover .resizer-handle::after,
+.resizer.dragging .resizer-handle::before,
+.resizer.dragging .resizer-handle::after {
+    background: var(--color-go);
+}
+
+/* Tabs Header System */
+.tabs-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 75%;
+}
+
+.templates {
+    display: flex;
+    gap: 0.4rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+}
+
+.templates::-webkit-scrollbar {
+    display: none;
+}
+
+.tab-add-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    color: var(--color-text-muted);
+    font-family: var(--font-outfit);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.tab-add-btn:hover {
+    background: rgba(99, 102, 241, 0.1);
+    color: #ffffff;
+    border-color: var(--color-go);
+}
+
+.tmpl-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    white-space: nowrap;
+}
+
+.tab-close {
+    font-size: 1.1rem;
+    line-height: 1;
+    color: var(--color-text-muted);
+    transition: color 0.15s;
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tab-close:hover {
+    color: var(--color-error);
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.tmpl-btn.active .tab-close {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.tmpl-btn.active .tab-close:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.2);
+}
+
 
 /* Card Headers */
 .card-header {
@@ -184,6 +329,7 @@ header h1 {
 .editor-card {
     display: flex;
     flex-direction: column;
+    height: 100dvh;
 }
 
 .editor-wrapper {
@@ -312,6 +458,7 @@ header h1 {
 .results-card {
     display: flex;
     flex-direction: column;
+    height: 100dvh;
 }
 
 /* Status badge */
@@ -434,7 +581,6 @@ header h1 {
     font-size: 0.85rem;
     line-height: 1.6;
     overflow-y: auto;
-    max-height: 220px;
 }
 
 .console-line {

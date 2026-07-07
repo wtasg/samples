@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>V8 + Go Integration Playground</title>
-    <!-- Premium Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Local Premium Fonts -->
+    <link rel="stylesheet" href="fonts.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -30,11 +28,16 @@
             <section class="editor-card glass">
                 <div class="card-header">
                     <h2>Javascript Editor</h2>
-                    <div class="templates">
-                        <button class="tmpl-btn active" data-template="math">Basic Math</button>
-                        <button class="tmpl-btn" data-template="gocompute">Go Callback (Math)</button>
-                        <button class="tmpl-btn" data-template="gofetch">Go Callback (Fetch)</button>
-                        <button class="tmpl-btn" data-template="error">JS Error Handler</button>
+                    <div class="tabs-container">
+                        <div class="templates" id="editor-tabs">
+                            <button class="tmpl-btn active" data-tab="math">Basic Math</button>
+                            <button class="tmpl-btn" data-tab="gocompute">Go Callback (Math)</button>
+                            <button class="tmpl-btn" data-tab="gofetch">Go Callback (Fetch)</button>
+                            <button class="tmpl-btn" data-tab="error">JS Error Handler</button>
+                        </div>
+                        <button class="tab-add-btn" id="new-tab-btn" title="Open new blank editor">
+                            <span>+ New</span>
+                        </button>
                     </div>
                 </div>
                 <div class="editor-wrapper">
@@ -49,6 +52,11 @@
                     </button>
                 </div>
             </section>
+
+            <!-- Draggable Resizer Splitter -->
+            <div class="resizer" id="dragbar" title="Drag to resize panels">
+                <div class="resizer-handle"></div>
+            </div>
 
             <!-- Right Side: Console and Results -->
             <section class="results-card glass">

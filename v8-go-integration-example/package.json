@@ -1,0 +1,12 @@
+{
+  "name": "v8-go-integration-playground-tests",
+  "version": "1.0.0",
+  "description": "Functional tests for V8 Go integration playground",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "typescript": "^5.9.3"
+  }
+}

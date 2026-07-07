@@ -19,3 +19,10 @@ v8-go-integration-example/server
 
 # OS files
 .DS_Store
+
+# Node.js and Playwright test artifacts
+v8-go-integration-example/node_modules/
+v8-go-integration-example/test-results/
+v8-go-integration-example/playwright-report/
+v8-go-integration-example/blob-report/
+
