@@ -1,6 +1,3 @@
-# Compiled server binary
-server
-
 # Executables
 *.exe
 *.exe~
@@ -21,4 +18,3 @@ node_modules/
 test-results/
 playwright-report/
 blob-report/
-

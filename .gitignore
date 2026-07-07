@@ -1,5 +1,4 @@
 # Binaries and executables
-v8-go-integration-example/server
 *.exe
 *.exe~
 *.dll
@@ -25,4 +24,3 @@ v8-go-integration-example/node_modules/
 v8-go-integration-example/test-results/
 v8-go-integration-example/playwright-report/
 v8-go-integration-example/blob-report/
-
