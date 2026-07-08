@@ -13,6 +13,18 @@ A web application demonstrating:
 
 For detailed setup, installation, and run instructions, refer to the [V8 + Go Integration Example README](/v8-go-integration-example/README.md).
 
+### 2. [Electron Canvas Studio](/electron-canvas-example/README.md)
+
+An Electron desktop application showcasing HTML5 Canvas:
+
+- Supports drawing lines, circles, squares, rectangles, and freehand paths.
+- Includes undo/redo history, canvas clearing, and PNG export.
+- Saves canvas drawing state during window resizing.
+- Includes Jasmine unit tests and Playwright E2E integration tests.
+
+For detailed setup, installation, and run instructions, refer to the [Electron Canvas Studio README](/electron-canvas-example/README.md).
+
 ## Ports Reference
 
 1. `60001` : [V8 + Go Integration Example](/v8-go-integration-example/README.md)
+2. Desktop App: [Electron Canvas Studio](/electron-canvas-example/README.md) (Runs locally)
