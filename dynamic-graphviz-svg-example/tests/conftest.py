@@ -1,3 +1,4 @@
+import os
 import subprocess
 import time
 import socket
@@ -9,7 +10,7 @@ def is_port_open(port: int) -> bool:
 
 @pytest.fixture(scope="session", autouse=True)
 def run_server():
-    port = 60002
+    port = int(os.environ.get("PORT", 60003))
     server_url = f"http://127.0.0.1:{port}"
     
     # If server is already running, reuse it

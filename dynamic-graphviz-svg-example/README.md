@@ -62,7 +62,9 @@ User <---> Web Server (FastAPI) <---> Graphviz (CLI) <---> SVG Output
 
 ### Running the Server
 
-Start the FastAPI server:
+#### Local Execution
+
+Start the FastAPI server locally:
 
 ```bash
 python main.py
@@ -71,10 +73,33 @@ python main.py
 Or run directly via uvicorn:
 
 ```bash
-uvicorn main:app --host 0.0.0.0 --port 60002 --reload
+uvicorn main:app --host 0.0.0.0 --port 60003 --reload
 ```
 
-Open your browser and navigate to `http://localhost:60002`.
+Open your browser and navigate to `http://localhost:60003`.
+
+#### Docker Compose Execution
+
+Alternatively, you can run the server inside an isolated Docker container:
+
+1. Create your active `.env` configuration file from the template:
+
+   ```bash
+   cp sample.env .env
+   ```
+
+2. Launch the container stack in detached mode:
+
+   ```bash
+   docker compose up --build -d
+   ```
+
+3. Open your browser and navigate to `http://localhost:60003`.
+4. Tear down the running container:
+
+   ```bash
+   docker compose down
+   ```
 
 ---
 

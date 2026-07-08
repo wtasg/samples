@@ -19,7 +19,10 @@ type APIServer struct {
 }
 
 func main() {
-	port := "60001"
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "60001"
+	}
 	log.Printf("Starting V8-Go Integration Server on port %s...", port)
 
 	// Instantiate the V8 engine runner

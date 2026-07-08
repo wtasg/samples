@@ -42,4 +42,35 @@ For detailed setup, installation, and run instructions, refer to the [Graphviz F
 
 1. `60001` : [V8 + Go Integration Example](/v8-go-integration-example/README.md)
 2. Desktop App: [Electron Canvas Studio](/electron-canvas-example/README.md) (Runs locally)
-3. `60002` : [Graphviz Flow](/dynamic-graphviz-svg-example/README.md)
+3. `60003` : [Graphviz Flow](/dynamic-graphviz-svg-example/README.md)
+
+## Docker Deployment
+
+This repository includes a root `docker-compose.yml` to run the web applications together.
+
+### Running with Docker Compose
+
+1. Copy the sample environment file to create your active `.env` configuration:
+
+   ```bash
+   cp sample.env .env
+   ```
+
+2. Configure the ports in the `.env` file (defaults are `60001` for V8 + Go and `60003` for Graphviz Flow).
+3. Build and launch all services in detached mode:
+
+   ```bash
+   docker compose up --build --detach
+   ```
+
+4. Verify the services are running:
+
+   ```bash
+   docker compose ps
+   ```
+
+5. To stop the running containers:
+
+   ```bash
+   docker compose down
+   ```

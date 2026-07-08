@@ -1,0 +1,19 @@
+services:
+  v8-go-integration:
+    build:
+      context: ./v8-go-integration-example
+      dockerfile: Dockerfile
+    ports:
+      - "${V8_GO_PORT}:${V8_GO_PORT}"
+    environment:
+      - PORT=${V8_GO_PORT}
+
+  graphviz-flow:
+    build:
+      context: ./dynamic-graphviz-svg-example
+      dockerfile: Dockerfile
+    ports:
+      - "${GRAPHVIZ_FLOW_PORT}:${GRAPHVIZ_FLOW_PORT}"
+    environment:
+      - PORT=${GRAPHVIZ_FLOW_PORT}
+      - HOST=0.0.0.0

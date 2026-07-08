@@ -250,5 +250,8 @@ def read_root():
 
 if __name__ == "__main__":
     import uvicorn
-    # Use port 60002 as allocated in the implementation plan
-    uvicorn.run("main:app", host="0.0.0.0", port=60002, reload=True)
+    host = os.getenv("HOST", "0.0.0.0")
+    port = int(os.getenv("PORT", "60003"))
+    reload_mode = os.getenv("RELOAD", "True").lower() in ("true", "1", "yes")
+    # Use port 60003 as allocated in the implementation plan
+    uvicorn.run("main:app", host=host, port=port, reload=reload_mode)

@@ -48,7 +48,30 @@ go run src/server/main.go
 
 The server will start on port `60001` and serve the playground client. Visit [http://localhost:60001](http://localhost:60001) in your browser.
 
-### 2. Run Go Tests
+### 2. Start the Server (Docker Compose)
+
+You can run the server inside an isolated Docker container:
+
+1. Create your active `.env` configuration file from the template:
+
+   ```bash
+   cp sample.env .env
+   ```
+
+2. Launch the container stack in detached mode:
+
+   ```bash
+   docker compose up --build -d
+   ```
+
+3. Visit [http://localhost:60001](http://localhost:60001) in your browser.
+4. Tear down the running container:
+
+   ```bash
+   docker compose down
+   ```
+
+### 3. Run Go Tests
 
 You can execute the unit and integration tests across the Go codebase:
 
@@ -56,7 +79,7 @@ You can execute the unit and integration tests across the Go codebase:
 go test -v ./...
 ```
 
-### 3. Run Playwright E2E Tests
+### 4. Run Playwright E2E Tests
 
 The functional web tests are built using Playwright and TypeScript.
 
