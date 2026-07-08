@@ -24,7 +24,22 @@ An Electron desktop application showcasing HTML5 Canvas:
 
 For detailed setup, installation, and run instructions, refer to the [Electron Canvas Studio README](/electron-canvas-example/README.md).
 
+### 3. [Graphviz Flow](/dynamic-graphviz-svg-example/README.md)
+
+A python FastAPI web application for dynamically rendering and building Graphviz SVG diagrams:
+
+- Live code editor for Graphviz DOT language with real-time compilation.
+- Drag-and-drop shape palette (Rectangle, Ellipse, Circle, Diamond, Database) to add nodes.
+- Interactive drag-and-drop arrow creation between nodes in the SVG.
+- Move and reposition nodes dynamically (in coordinate-based layouts like `neato`).
+- Properties inspector to customize node/edge labels, shapes, and colors.
+- Pan and zoom support with a beautiful grid viewport.
+- Complete backend integration tests using pytest.
+
+For detailed setup, installation, and run instructions, refer to the [Graphviz Flow README](/dynamic-graphviz-svg-example/README.md).
+
 ## Ports Reference
 
 1. `60001` : [V8 + Go Integration Example](/v8-go-integration-example/README.md)
 2. Desktop App: [Electron Canvas Studio](/electron-canvas-example/README.md) (Runs locally)
+3. `60002` : [Graphviz Flow](/dynamic-graphviz-svg-example/README.md)

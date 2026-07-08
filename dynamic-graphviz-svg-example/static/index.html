@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphviz Flow - Interactive SVG Diagram Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="app-header">
+            <div class="header-logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="5" r="4" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="5" cy="18" r="4" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="19" cy="18" r="4" stroke="currentColor" stroke-width="2"/>
+                    <path d="M8.5 8L10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M15.5 8L14 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M12 14V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <h1>Graphviz Flow</h1>
+            </div>
+            
+            <div class="header-controls">
+                <div class="control-group">
+                    <label for="layout-engine">Engine:</label>
+                    <select id="layout-engine">
+                        <option value="dot">dot (Hierarchical)</option>
+                        <option value="neato" selected>neato (Spring / Manual)</option>
+                        <option value="fdp">fdp (Force-Directed)</option>
+                        <option value="circo">circo (Circular)</option>
+                        <option value="twopi">twopi (Radial)</option>
+                    </select>
+                </div>
+                
+                <button id="btn-render" class="btn btn-primary" title="Force Render Graph (Ctrl+Enter)">
+                    <span class="btn-icon">⚡</span> Render
+                </button>
+                <button id="btn-copy-dot" class="btn btn-secondary" title="Copy DOT Code">
+                    Copy DOT
+                </button>
+                <button id="btn-download-svg" class="btn btn-secondary" title="Download SVG File">
+                    Export SVG
+                </button>
+                <button id="btn-clear" class="btn btn-danger" title="Clear Canvas and Reset Graph">
+                    Clear
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Studio Body -->
+        <main class="app-workspace">
+            <!-- Left Sidebar (Editor / Properties) -->
+            <aside class="sidebar-panel">
+                <!-- Sidebar Tabs -->
+                <div class="sidebar-tabs">
+                    <button class="tab-btn active" data-tab="tab-editor">Code Editor</button>
+                    <button class="tab-btn" data-tab="tab-palette">Shape Palette</button>
+                </div>
+
+                <div class="sidebar-content">
+                    <!-- Code Editor Tab -->
+                    <div id="tab-editor" class="tab-pane active">
+                        <div class="editor-container">
+                            <div class="editor-header">
+                                <span>DOT Source Code</span>
+                                <span id="sync-badge" class="sync-badge synced">Synced</span>
+                            </div>
+                            <textarea id="dot-textarea" spellcheck="false" autocomplete="off">digraph G {
+    # Set default styles
+    node [style="filled", fillcolor="#2a2f3a", color="#4e5767", fontcolor="#ffffff", shape="ellipse"];
+    edge [color="#636e72", fontcolor="#ffffff"];
+
+    # Nodes
+    A [label="Start Node", shape="box", fillcolor="#3498db"];
+    B [label="Interactive", shape="ellipse", fillcolor="#2ecc71"];
+    C [label="Auto-Layout", shape="diamond", fillcolor="#e67e22"];
+
+    # Edges
+    A -> B [label="Drag here!"];
+    B -> C;
+    C -> A [style="dashed"];
+}</textarea>
+                            <div id="error-console" class="error-console hidden">
+                                <div class="error-title">Compilation Error:</div>
+                                <pre id="error-text"></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shape Palette Tab -->
+                    <div id="tab-palette" class="tab-pane">
+                        <div class="palette-container">
+                            <h3>Drag Shapes onto Canvas</h3>
+                            <p class="section-desc">Drag and drop any shape below to create a new node at that position.</p>
+                            
+                            <div class="palette-items">
+                                <div class="palette-item" draggable="true" data-shape="box" data-color="#3498db">
+                                    <div class="shape-preview shape-box"></div>
+                                    <span>Rectangle Node</span>
+                                </div>
+                                <div class="palette-item" draggable="true" data-shape="ellipse" data-color="#2ecc71">
+                                    <div class="shape-preview shape-ellipse"></div>
+                                    <span>Ellipse Node</span>
+                                </div>
+                                <div class="palette-item" draggable="true" data-shape="circle" data-color="#e74c3c">
+                                    <div class="shape-preview shape-circle"></div>
+                                    <span>Circle Node</span>
+                                </div>
+                                <div class="palette-item" draggable="true" data-shape="diamond" data-color="#e67e22">
+                                    <div class="shape-preview shape-diamond"></div>
+                                    <span>Diamond Node</span>
+                                </div>
+                                <div class="palette-item" draggable="true" data-shape="folder" data-color="#9b59b6">
+                                    <div class="shape-preview shape-folder"></div>
+                                    <span>Folder / Database</span>
+                                </div>
+                            </div>
+
+                            <hr class="divider">
+
+                            <h3>Interaction Tips</h3>
+                            <ul class="tips-list">
+                                <li><strong>Connect Nodes</strong>: Hover over any node, then click & drag from the blue connector circle <span class="connector-indicator"></span> to another node.</li>
+                                <li><strong>Move Nodes</strong>: Use `neato` or `fdp` engine, and click & drag any node on the canvas to relocate it.</li>
+                                <li><strong>Select Element</strong>: Click on any node or edge to inspect and edit its properties.</li>
+                                <li><strong>Delete Element</strong>: Select a node or edge, then click "Delete Element" in the panel below, or press the <code>Delete</code> key.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inspector Panel (Floating/Bottom of Sidebar) -->
+                <section class="inspector-panel">
+                    <div class="inspector-header">
+                        <h2>Properties Inspector</h2>
+                        <span id="selected-type-badge" class="type-badge">None Selected</span>
+                    </div>
+                    <div class="inspector-content">
+                        <!-- Default state -->
+                        <div id="inspector-empty" class="inspector-section">
+                            <p class="placeholder-text">Click a node or edge in the diagram to inspect and edit its attributes.</p>
+                        </div>
+                        
+                        <!-- Node Inspector -->
+                        <form id="inspector-node-form" class="inspector-section hidden">
+                            <div class="form-group">
+                                <label for="node-id-display">Node ID:</label>
+                                <input type="text" id="node-id-display" readonly class="input-readonly">
+                            </div>
+                            <div class="form-group">
+                                <label for="node-label">Label:</label>
+                                <input type="text" id="node-label">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="node-shape">Shape:</label>
+                                    <select id="node-shape">
+                                        <option value="ellipse">Ellipse</option>
+                                        <option value="box">Box</option>
+                                        <option value="circle">Circle</option>
+                                        <option value="diamond">Diamond</option>
+                                        <option value="egg">Egg</option>
+                                        <option value="triangle">Triangle</option>
+                                        <option value="cylinder">Database</option>
+                                        <option value="note">Note</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="node-fillcolor">Fill Color:</label>
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="node-fillcolor">
+                                        <input type="text" id="node-fillcolor-text" placeholder="#ffffff">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="node-color">Border Color:</label>
+                                    <input type="color" id="node-color">
+                                </div>
+                                <div class="form-group">
+                                    <label for="node-fontcolor">Text Color:</label>
+                                    <input type="color" id="node-fontcolor">
+                                </div>
+                            </div>
+                            <div class="button-group">
+                                <button type="button" id="btn-update-node" class="btn btn-primary">Apply Changes</button>
+                                <button type="button" id="btn-delete-node" class="btn btn-danger">Delete Node</button>
+                            </div>
+                        </form>
+
+                        <!-- Edge Inspector -->
+                        <form id="inspector-edge-form" class="inspector-section hidden">
+                            <div class="form-group">
+                                <label>Connection:</label>
+                                <div class="edge-connection-display">
+                                    <span id="edge-source-display">A</span>
+                                    <span class="edge-arrow-display">➔</span>
+                                    <span id="edge-target-display">B</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="edge-label">Label:</label>
+                                <input type="text" id="edge-label">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="edge-style">Style:</label>
+                                    <select id="edge-style">
+                                        <option value="solid">Solid</option>
+                                        <option value="dashed">Dashed</option>
+                                        <option value="dotted">Dotted</option>
+                                        <option value="bold">Bold</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="edge-color">Edge Color:</label>
+                                    <input type="color" id="edge-color">
+                                </div>
+                            </div>
+                            <div class="button-group">
+                                <button type="button" id="btn-update-edge" class="btn btn-primary">Apply Changes</button>
+                                <button type="button" id="btn-delete-edge" class="btn btn-danger">Delete Connection</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </aside>
+
+            <!-- Right Canvas Viewport -->
+            <section class="canvas-panel">
+                <div class="canvas-viewport" id="canvas-viewport">
+                    <!-- Zoom & Pan Floating Controls -->
+                    <div class="canvas-controls">
+                        <button id="btn-zoom-in" title="Zoom In">+</button>
+                        <button id="btn-zoom-out" title="Zoom Out">−</button>
+                        <button id="btn-zoom-reset" title="Reset View">⊙</button>
+                        <button id="btn-zoom-fit" title="Fit to Screen">⛶</button>
+                    </div>
+                    
+                    <!-- SVG Interactive Container -->
+                    <div class="canvas-svg-container" id="svg-container">
+                        <!-- SVG content will be loaded here dynamically -->
+                        <div class="canvas-empty-state">
+                            <div class="spinner"></div>
+                            <p>Compiling graph...</p>
+                        </div>
+                    </div>
+
+                    <!-- Temp overlay elements (like drawing lines) will be managed dynamically inside script.js -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden">Copied to clipboard!</div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
