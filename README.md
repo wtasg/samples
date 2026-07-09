@@ -38,11 +38,24 @@ A python FastAPI web application for dynamically rendering and building Graphviz
 
 For detailed setup, installation, and run instructions, refer to the [Graphviz Flow README](/dynamic-graphviz-svg-example/README.md).
 
+### 4. [MCP Command Server](/ls-mcp-example/README.md)
+
+A python Model Context Protocol (MCP) server implementing a dynamic plugin architecture:
+
+- Central CRUDL (Create, Read, Update, Delete, List) Plugin Registry.
+- Dynamic runtime plugin loading from the `plugins/` directory.
+- Implements the `ls` tool as a dynamic plugin with safe subprocess invocation.
+- Supports running over standard I/O (stdio) transport or Server-Sent Events (SSE) HTTP transport.
+- Configurable port (`60004`) for the publicly exposed SSE listener.
+
+For detailed setup, installation, and run instructions, refer to the [MCP Command Server README](/ls-mcp-example/README.md).
+
 ## Ports Reference
 
 1. `60001` : [V8 + Go Integration Example](/v8-go-integration-example/README.md)
 2. Desktop App: [Electron Canvas Studio](/electron-canvas-example/README.md) (Runs locally)
 3. `60003` : [Graphviz Flow](/dynamic-graphviz-svg-example/README.md)
+4. `60004` : [MCP Command Server](/ls-mcp-example/README.md)
 
 ## Docker Deployment
 
