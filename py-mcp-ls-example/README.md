@@ -174,8 +174,8 @@ To connect this server to Claude Desktop, add it to your `claude_desktop_config.
 {
   "mcpServers": {
     "command-mcp-server": {
-      "command": "/absolute/path/to/ls-mcp-example/.venv/bin/python3",
-      "args": ["/absolute/path/to/ls-mcp-example/mcp_server.py"]
+      "command": "/absolute/path/to/py-mcp-ls-example/.venv/bin/python3",
+      "args": ["/absolute/path/to/py-mcp-ls-example/mcp_server.py"]
     }
   }
 }
