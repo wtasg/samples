@@ -9,3 +9,6 @@ Ports
 7. 60007 - node-express-http3-example (HTTP/3)
 8. 60447 - node-express-http3-example (HTTPS)
 9. Ephemeral - benchmark-node-express-servers-example (Dockerized benchmark runner)
+10. 60008 - node-express-websocket-example (WSS)
+11. 60009 - grpc-go-example (gRPC / Connect)
+12. 60010 - wasm-browser-example (HTTP)

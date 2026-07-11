@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocket Live Dashboard — Full-Duplex Monitor</title>
+  <meta name="description" content="A Node.js Express WebSocket example demonstrating full-duplex real-time communication: server-push CPU metrics and client-to-server commands over WSS.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <div class="app">
+    <header class="app-header">
+      <div class="header-left">
+        <div class="protocol-badge" id="protocol-badge">WSS</div>
+        <h1>WebSocket Dashboard</h1>
+        <span class="subtitle">Full-Duplex Real-Time Monitor</span>
+      </div>
+      <div class="header-right">
+        <div class="conn-status" id="conn-status">
+          <span class="conn-dot" id="conn-dot"></span>
+          <span class="conn-text" id="conn-text">Connecting…</span>
+        </div>
+        <div class="client-chip" id="client-chip">—</div>
+      </div>
+    </header>
+
+    <main class="dashboard">
+
+      <!-- Live CPU chart -->
+      <section class="card chart-card" id="chart-card">
+        <div class="card-head">
+          <div class="card-icon">≋</div>
+          <h2>Live CPU Stream</h2>
+          <div class="live-pill"><span class="live-dot"></span>LIVE</div>
+        </div>
+        <div class="card-body">
+          <canvas id="cpu-canvas"></canvas>
+          <div class="chart-meta">
+            <span>Current: <strong id="cpu-current">—</strong></span>
+            <span>Peak: <strong id="cpu-peak">—</strong></span>
+            <span>Avg: <strong id="cpu-avg">—</strong></span>
+            <span id="client-count-lbl">Clients: <strong id="client-count">—</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Interval control -->
+      <section class="card interval-card">
+        <div class="card-head">
+          <div class="card-icon">⏱</div>
+          <h2>Push Interval</h2>
+          <span class="badge-secondary">Client → Server Command</span>
+        </div>
+        <div class="card-body">
+          <div class="slider-group">
+            <label for="interval-slider">Update rate: <span id="interval-display">1000</span> ms</label>
+            <input type="range" id="interval-slider" min="250" max="5000" step="250" value="1000">
+            <div class="slider-ticks">
+              <span>250ms</span><span>1s</span><span>2.5s</span><span>5s</span>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="apply-interval-btn">Apply Interval</button>
+          <div class="ack-toast hide" id="interval-ack">✓ Interval updated</div>
+        </div>
+      </section>
+
+      <!-- Ping / Pong -->
+      <section class="card ping-card">
+        <div class="card-head">
+          <div class="card-icon">⚡</div>
+          <h2>Ping / Pong</h2>
+          <span class="badge-secondary">Round-Trip Latency</span>
+        </div>
+        <div class="card-body">
+          <div class="ping-stat">
+            <span class="stat-label">Last RTT</span>
+            <span class="stat-value" id="ping-rtt">—</span>
+          </div>
+          <div class="ping-stat">
+            <span class="stat-label">Min / Max</span>
+            <span class="stat-value" id="ping-minmax">—</span>
+          </div>
+          <div class="ping-stat">
+            <span class="stat-label">Pings Sent</span>
+            <span class="stat-value" id="ping-count">0</span>
+          </div>
+          <button class="btn btn-secondary" id="ping-btn">Send Ping</button>
+        </div>
+      </section>
+
+      <!-- Broadcast -->
+      <section class="card broadcast-card">
+        <div class="card-head">
+          <div class="card-icon">📡</div>
+          <h2>Broadcast</h2>
+          <span class="badge-secondary">All Connected Clients</span>
+        </div>
+        <div class="card-body">
+          <div class="input-group">
+            <input type="text" id="broadcast-input" placeholder="Type a message to broadcast…" maxlength="256">
+            <button class="btn btn-accent" id="broadcast-btn">Send</button>
+          </div>
+          <div class="broadcast-log" id="broadcast-log">
+            <div class="log-placeholder">Broadcasts will appear here…</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Message log -->
+      <section class="card log-card">
+        <div class="card-head">
+          <div class="card-icon">&gt;_</div>
+          <h2>WebSocket Event Log</h2>
+          <button class="btn-clear" id="clear-log-btn">Clear</button>
+        </div>
+        <div class="card-body">
+          <div class="log-output" id="log-output">
+            <div class="log-line log-system">[System] Initializing WebSocket connection…</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Server heartbeat -->
+      <section class="card heartbeat-card">
+        <div class="card-head">
+          <div class="card-icon">♥</div>
+          <h2>Server Heartbeat</h2>
+          <span class="badge-secondary">REST /heartbeat</span>
+        </div>
+        <div class="card-body">
+          <div class="ping-stat">
+            <span class="stat-label">Status</span>
+            <span class="stat-value text-green" id="hb-status">—</span>
+          </div>
+          <div class="ping-stat">
+            <span class="stat-label">Uptime</span>
+            <span class="stat-value" id="hb-uptime">—</span>
+          </div>
+          <div class="ping-stat">
+            <span class="stat-label">WS Clients</span>
+            <span class="stat-value" id="hb-clients">—</span>
+          </div>
+          <button class="btn btn-secondary" id="hb-btn">Ping REST</button>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="app-footer">
+      <p>Node.js • Express • WebSocket (ws) • WSS • Full-Duplex</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

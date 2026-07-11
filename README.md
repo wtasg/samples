@@ -100,6 +100,44 @@ A Dockerized load-testing and verification suite to compare performance across d
 
 For detailed setup and test instructions, refer to the [Express Server Benchmarking Suite README](/benchmark-node-express-servers-example/README.md).
 
+### 9. [WebSocket Live Dashboard](/node-express-websocket-example/README.md)
+
+A Node.js and Express web application demonstrating full-duplex real-time communication over WebSocket (WSS):
+
+- Automatic SSL/TLS key and certificate generation on startup.
+- WebSocket endpoint `/ws` (WSS) — server pushes live CPU stats, clients send commands.
+- Supported client→server message types: `ping` (latency), `set-interval` (push rate), `broadcast` (fanout).
+- Premium dark-mode dashboard with live CPU chart, round-trip latency tracker, configurable interval slider, broadcast panel.
+- Exponential backoff auto-reconnect on disconnect.
+- Integration tests covering connection, CPU push, ping/pong, interval control, broadcast, and error handling.
+
+For detailed setup, installation, and run instructions, refer to the [WebSocket Live Dashboard README](/node-express-websocket-example/README.md).
+
+### 10. [gRPC Connect-Go Dashboard](/grpc-go-example/README.md)
+
+A Go web application demonstrating gRPC using the Connect protocol — completing the protocol trilogy (HTTPS → HTTP/2 → HTTP/3 → WebSocket → gRPC):
+
+- Protocol Buffers definition with three RPC methods: `GetStatus` (unary), `StreamCPU` (server-streaming), `Echo` (unary).
+- Go server using `connectrpc.com/connect`, speaking gRPC, gRPC-Web, and Connect protocol on a single port.
+- No Envoy proxy required — the browser calls gRPC methods directly via `fetch`.
+- Premium dark-mode dashboard with server status card, live CPU streaming chart, Echo terminal with RTT display.
+- Go integration tests using the Connect test client.
+
+For detailed setup, installation, and run instructions, refer to the [gRPC Connect-Go README](/grpc-go-example/README.md).
+
+### 11. [WebAssembly Browser Explorer](/wasm-browser-example/README.md)
+
+A web application demonstrating Rust compiled to WebAssembly, running native-speed computation in the browser — the browser-side counterpart to the V8-in-Go example:
+
+- Rust crate compiled to WASM via `wasm-pack` + `wasm-bindgen`.
+- **Mandelbrot Renderer** — full Mandelbrot set rendered on Canvas entirely in WASM.
+- **Fibonacci Race** — benchmarks `fibonacci(n)` × 10,000 calls in JS vs WASM side-by-side.
+- **Prime Sieve Benchmark** — Sieve of Eratosthenes (up to 5M) in JS vs WASM.
+- **FNV-1a Hash Terminal** — computes 64-bit FNV-1a hash of arbitrary text in Rust.
+- 12 Rust unit tests + 10 integration tests covering server endpoints and WASM artifact validity.
+
+For detailed setup, installation, and run instructions, refer to the [WebAssembly Browser Explorer README](/wasm-browser-example/README.md).
+
 ## Ports Reference
 
 1. `60001` : [V8 + Go Integration Example](/v8-go-integration-example/README.md)
@@ -111,6 +149,9 @@ For detailed setup and test instructions, refer to the [Express Server Benchmark
 7. `60446` : [HTTP/2 & HTTPS Dual Express Example (HTTPS fallback)](/node-express-http2-example/README.md)
 8. `60007` : [HTTP/3 & HTTPS Dual Express Example (HTTP/3)](/node-express-http3-example/README.md)
 9. `60447` : [HTTP/3 & HTTPS Dual Express Example (HTTPS fallback)](/node-express-http3-example/README.md)
+10. `60008` : [WebSocket Live Dashboard](/node-express-websocket-example/README.md)
+11. `60009` : [gRPC Connect-Go Dashboard](/grpc-go-example/README.md)
+12. `60010` : [WebAssembly Browser Explorer](/wasm-browser-example/README.md)
 
 ## Docker Deployment
 

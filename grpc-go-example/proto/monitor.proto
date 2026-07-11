@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package monitor.v1;
+
+option go_package = "grpc-go-example/gen/monitor/v1;monitorv1";
+
+// MonitorService provides real-time system monitoring over gRPC / Connect protocol.
+service MonitorService {
+  // GetStatus returns a single snapshot of server status (unary RPC).
+  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
+
+  // StreamCPU streams CPU load samples at a configurable interval (server-streaming RPC).
+  rpc StreamCPU(StreamCPURequest) returns (stream CPUSample);
+
+  // Echo returns the message back with a server-side timestamp (unary RPC).
+  rpc Echo(EchoRequest) returns (EchoResponse);
+}
+
+// ── GetStatus ────────────────────────────────────────────────
+message GetStatusRequest {}
+
+message GetStatusResponse {
+  string status    = 1; // "alive"
+  string version   = 2; // server version string
+  double uptime_s  = 3; // process uptime in seconds
+  int32  cpu_count = 4; // number of CPU cores
+  string go_version = 5;
+  string timestamp = 6; // ISO-8601 UTC
+}
+
+// ── StreamCPU ────────────────────────────────────────────────
+message StreamCPURequest {
+  // Interval between samples in milliseconds (clamped 200ms–5000ms).
+  int32 interval_ms = 1;
+}
+
+message CPUSample {
+  double cpu_percent  = 1; // 0.0–100.0
+  double mem_used_mb  = 2;
+  double mem_total_mb = 3;
+  int64  goroutines   = 4;
+  string timestamp    = 5;
+}
+
+// ── Echo ─────────────────────────────────────────────────────
+message EchoRequest {
+  string message = 1;
+}
+
+message EchoResponse {
+  string message      = 1; // original message echoed back
+  string server_time  = 2;
+  int64  length       = 3;
+}

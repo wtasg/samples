@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>gRPC Connect Dashboard — System Monitor</title>
+  <meta name="description" content="A Go gRPC server using the Connect protocol — demonstrates unary and server-streaming RPCs with a premium dark-mode dashboard.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <div class="app">
+    <header class="app-header">
+      <div class="header-left">
+        <div class="proto-badge">gRPC / Connect</div>
+        <h1>Connect-Go Dashboard</h1>
+        <span class="subtitle">Unary &amp; Streaming RPCs</span>
+      </div>
+      <div class="header-right">
+        <div class="stream-status" id="stream-status">
+          <span class="status-dot" id="status-dot"></span>
+          <span id="status-text">Idle</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard">
+
+      <!-- Server Status Card (Unary: GetStatus) -->
+      <section class="card status-card">
+        <div class="card-head">
+          <div class="card-icon">🔌</div>
+          <h2>Server Status</h2>
+          <span class="rpc-tag">Unary RPC</span>
+        </div>
+        <div class="card-body">
+          <div class="stat-grid">
+            <div class="stat-item">
+              <span class="stat-label">Status</span>
+              <span class="stat-value text-green" id="srv-status">—</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Uptime</span>
+              <span class="stat-value" id="srv-uptime">—</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">CPU Cores</span>
+              <span class="stat-value" id="srv-cpu-count">—</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Go Version</span>
+              <span class="stat-value mono" id="srv-go-version">—</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Server Time</span>
+              <span class="stat-value mono" id="srv-timestamp">—</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Version</span>
+              <span class="stat-value mono" id="srv-version">—</span>
+            </div>
+          </div>
+          <button class="btn btn-secondary" id="get-status-btn">Call GetStatus</button>
+        </div>
+      </section>
+
+      <!-- Streaming CPU (Server-Streaming: StreamCPU) -->
+      <section class="card stream-card">
+        <div class="card-head">
+          <div class="card-icon">≋</div>
+          <h2>CPU Stream</h2>
+          <div class="live-pill" id="live-pill" style="display:none"><span class="live-dot"></span>LIVE</div>
+          <span class="rpc-tag">Server-Streaming RPC</span>
+        </div>
+        <div class="card-body">
+          <canvas id="cpu-canvas"></canvas>
+          <div class="chart-meta">
+            <span>CPU: <strong id="cpu-now">—</strong></span>
+            <span>Goroutines: <strong id="goroutines">—</strong></span>
+            <span>Mem Used: <strong id="mem-used">—</strong></span>
+            <span>Mem Sys: <strong id="mem-total">—</strong></span>
+          </div>
+          <div class="stream-controls">
+            <div class="slider-group">
+              <label>Interval: <span id="stream-interval-display">1000</span> ms</label>
+              <input type="range" id="stream-interval" min="200" max="5000" step="200" value="1000">
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" id="start-stream-btn">Start Stream</button>
+              <button class="btn btn-danger" id="stop-stream-btn" disabled>Stop Stream</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Echo Terminal (Unary: Echo) -->
+      <section class="card echo-card">
+        <div class="card-head">
+          <div class="card-icon">↩</div>
+          <h2>Echo Terminal</h2>
+          <span class="rpc-tag">Unary RPC</span>
+        </div>
+        <div class="card-body">
+          <div class="echo-terminal" id="echo-terminal">
+            <div class="echo-placeholder">Send a message to echo it from the server…</div>
+          </div>
+          <div class="input-group">
+            <input type="text" id="echo-input" placeholder="Type a message…" maxlength="512">
+            <button class="btn btn-accent" id="echo-btn">Echo</button>
+          </div>
+          <div class="echo-meta">
+            <span>Round-trips: <strong id="echo-count">0</strong></span>
+            <span>Last RTT: <strong id="echo-rtt">—</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Event Log -->
+      <section class="card log-card">
+        <div class="card-head">
+          <div class="card-icon">&gt;_</div>
+          <h2>RPC Event Log</h2>
+          <button class="btn-clear" id="clear-log-btn">Clear</button>
+        </div>
+        <div class="card-body">
+          <div class="log-output" id="log-output">
+            <div class="log-line log-system">[System] Connect-Go gRPC Dashboard initialized.</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="app-footer">
+      <p>Go • Connect-Go • gRPC • Server-Streaming • Unary RPC • Protocol Buffers</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
