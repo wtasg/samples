@@ -1,0 +1,20 @@
+{
+  "name": "express-http2-example",
+  "version": "1.0.0",
+  "description": "Secure Express HTTP/2 and HTTPS Server Example",
+  "main": "server.js",
+  "scripts": {
+    "build": "node scripts/generate-certs.js",
+    "prestart": "npm run build",
+    "start": "node server.js",
+    "pretest": "npm run build",
+    "test": "node test.js"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.5.2",
+    "http2-express": "^1.1.1"
+  }
+}

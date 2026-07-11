@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTTP/2 & HTTPS Express Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="background-grid"></div>
+  <div class="radial-glow"></div>
+
+  <div class="app-container">
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="badge-group">
+          <span class="secure-badge">HTTP/2 &amp; HTTPS</span>
+          <span class="protocol-badge" id="active-protocol">Detecting...</span>
+        </div>
+        <h1>Dual-Protocol Express Monitor</h1>
+      </div>
+      <div class="connection-status" id="connection-status">
+        <span class="status-dot pulsing"></span>
+        <span class="status-text">Connecting...</span>
+      </div>
+    </header>
+
+    <main class="dashboard-grid">
+      <!-- Heartbeat & Info Card -->
+      <section class="card heartbeat-card">
+        <div class="card-header">
+          <div class="card-icon heartbeat-icon">♥</div>
+          <h2>Heartbeat &amp; Uptime</h2>
+        </div>
+        <div class="card-body">
+          <div class="heartbeat-value">
+            <span class="value-label">Status</span>
+            <span class="value-data text-green" id="heartbeat-status">Active</span>
+          </div>
+          <div class="stats-group">
+            <div class="stat-item">
+              <span class="stat-lbl">Uptime</span>
+              <span class="stat-val" id="server-uptime">0s</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-lbl">Ping Latency</span>
+              <span class="stat-val" id="last-ping-time">Never</span>
+            </div>
+          </div>
+          <button class="btn btn-secondary" id="ping-btn">Ping Server (/heartbeat)</button>
+        </div>
+      </section>
+
+      <!-- Manual CPU Query Card -->
+      <section class="card cpu-query-card">
+        <div class="card-header">
+          <div class="card-icon cpu-icon">⚡</div>
+          <h2>Instant CPU (/load)</h2>
+        </div>
+        <div class="card-body">
+          <div class="gauge-container">
+            <div class="radial-progress" id="cpu-gauge" style="--percent: 0;">
+              <div class="inner-circle">
+                <span class="gauge-value" id="cpu-query-val">0%</span>
+                <span class="gauge-label">CPU Load</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="rate-limit-badge" id="rate-limit-badge">
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="rate-limit-progress" style="width: 100%;"></div>
+            </div>
+            <span class="rate-limit-text" id="rate-limit-text">15 / 15 requests available</span>
+          </div>
+
+          <button class="btn btn-primary" id="query-cpu-btn">Query CPU Load</button>
+          
+          <div class="error-toast hide" id="error-toast">
+            <div class="toast-title">⚠️ Rate Limit Hit</div>
+            <div class="toast-body" id="error-msg">Too many requests. Please wait.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Real-time SSE Stream Card -->
+      <section class="card stream-card">
+        <div class="card-header">
+          <div class="card-icon stream-icon">≋</div>
+          <h2>Live Stream (/stream)</h2>
+          <div class="live-indicator">
+            <span class="live-dot"></span> LIVE
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <canvas id="cpu-chart" width="600" height="220"></canvas>
+          </div>
+          <div class="stream-info">
+            <span class="stream-data">Current CPU stream: <strong id="stream-cpu-val">0.0%</strong></span>
+            <span class="stream-latency" id="stream-timestamp">Waiting for connection...</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Console / Event Log -->
+      <section class="card console-card">
+        <div class="card-header">
+          <div class="card-icon console-icon">&gt;_</div>
+          <h2>Network Event Log</h2>
+          <button class="btn-clear" id="clear-log-btn">Clear</button>
+        </div>
+        <div class="card-body">
+          <div class="console-output" id="console-output">
+            <div class="console-line system-line">[System] Initializing connection to HTTP/2 secure dashboard...</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p>Node.js • Express • HTTP/2 (60006) • HTTPS (60446) • Server-Sent Events</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

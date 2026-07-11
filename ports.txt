@@ -4,3 +4,5 @@ Ports
 2. 60003 - dynamic-graphviz-svg-example
 3. 60004 - py-mcp-ls-example
 4. 60005 - node-express-https-example
+5. 60006 - node-express-http2-example (HTTP/2)
+6. 60446 - node-express-http2-example (HTTPS)
