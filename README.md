@@ -89,6 +89,16 @@ A Node.js and Express web application running over HTTP/3 (QUIC) and HTTPS:
 
 For detailed setup, installation, and run instructions, refer to the [HTTP/3 & HTTPS Dual Express README](/node-express-http3-example/README.md).
 
+### 8. [Express Server Benchmarking Suite](/benchmark-node-express-servers-example/README.md)
+
+A Dockerized load-testing and verification suite to compare performance across different HTTP protocol versions:
+
+- Isolates tests inside local virtual networks so benchmarks do not disrupt running host systems.
+- Compares HTTP/1.1 (HTTPS), HTTP/2 (Multiplexed), and HTTP/3 (QUIC) protocols under varying concurrency levels.
+- Employs self-healing client connection-recycling QUIC logic to tolerate extreme load spikes.
+- Auto-generates Markdown comparison tables reporting requests/sec and latency percentiles.
+
+For detailed setup and test instructions, refer to the [Express Server Benchmarking Suite README](/benchmark-node-express-servers-example/README.md).
 
 ## Ports Reference
 

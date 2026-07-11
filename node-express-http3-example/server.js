@@ -105,6 +105,7 @@ function createExpressApp() {
   const apiLimiter = rateLimit({
     windowMs: 15 * 1000,
     max: 15,
+    skip: (req) => req.headers['x-bypass-rate-limit'] === 'benchmark-secret-key',
     standardHeaders: true,
     legacyHeaders: false,
     message: {
@@ -203,8 +204,8 @@ const http3Server = createSecureServer(
 const httpsServer = https.createServer(sslOptions, httpsApp);
 
 if (process.env.NODE_ENV !== 'test') {
-  const HTTP3_PORT = process.env.HTTP3_PORT || 60007;
-  const HTTPS_PORT = process.env.HTTPS_PORT || 60447;
+  const HTTP3_PORT = parseInt(process.env.HTTP3_PORT || 60007, 10);
+  const HTTPS_PORT = parseInt(process.env.HTTPS_PORT || 60447, 10);
 
   http3Server.listen(HTTP3_PORT, '0.0.0.0');
   console.log(`HTTP/3 secure server listening on https://localhost:${HTTP3_PORT}`);

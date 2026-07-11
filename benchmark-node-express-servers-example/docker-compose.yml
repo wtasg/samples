@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  https-server:
+    build:
+      context: ../node-express-https-example
+      dockerfile: Dockerfile
+    expose:
+      - "60005"
+    environment:
+      - PORT=60005
+
+  http2-server:
+    build:
+      context: ../node-express-http2-example
+      dockerfile: Dockerfile
+    expose:
+      - "60006"
+      - "60446"
+    environment:
+      - HTTP2_PORT=60006
+      - HTTPS_PORT=60446
+
+  http3-server:
+    build:
+      context: ../node-express-http3-example
+      dockerfile: Dockerfile
+    expose:
+      - "60007/udp"
+      - "60447/tcp"
+    environment:
+      - HTTP3_PORT=60007
+      - HTTPS_PORT=60447
+
+  benchmark-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - https-server
+      - http2-server
+      - http3-server

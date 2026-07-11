@@ -1,0 +1,10 @@
+{
+  "name": "benchmark-runner",
+  "version": "1.0.0",
+  "description": "Benchmark runner for HTTP/1.1, HTTP/2, and HTTP/3 Express servers",
+  "main": "benchmark.js",
+  "dependencies": {
+    "minimist": "^1.2.8",
+    "@currentspace/http3": "*"
+  }
+}

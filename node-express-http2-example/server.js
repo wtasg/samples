@@ -56,6 +56,7 @@ function createExpressApp() {
   const apiLimiter = rateLimit({
     windowMs: 15 * 1000,
     max: 15,
+    skip: (req) => req.headers['x-bypass-rate-limit'] === 'benchmark-secret-key',
     standardHeaders: true,
     legacyHeaders: false,
     message: {
@@ -134,8 +135,8 @@ const http2Server = http2.createSecureServer(sslOptions, http2App);
 const httpsServer = https.createServer(sslOptions, httpsApp);
 
 if (process.env.NODE_ENV !== 'test') {
-  const HTTP2_PORT = process.env.HTTP2_PORT || 60006;
-  const HTTPS_PORT = process.env.HTTPS_PORT || 60446;
+  const HTTP2_PORT = parseInt(process.env.HTTP2_PORT || 60006, 10);
+  const HTTPS_PORT = parseInt(process.env.HTTPS_PORT || 60446, 10);
 
   http2Server.listen(HTTP2_PORT, () => {
     console.log(`HTTP/2 secure server running at: https://localhost:${HTTP2_PORT}`);

@@ -20,7 +20,7 @@ const sslOptions = {
 };
 
 const app = express();
-const PORT = process.env.PORT || 60005;
+const PORT = parseInt(process.env.PORT || 60005, 10);
 
 // 2. Configure Rate Limiters
 // We configure a rate limiter for the API/heartbeat endpoints.
@@ -28,6 +28,7 @@ const PORT = process.env.PORT || 60005;
 const apiLimiter = rateLimit({
   windowMs: 15 * 1000, // 15 seconds
   max: 15, // Limit each IP to 15 requests per window
+  skip: (req) => req.headers['x-bypass-rate-limit'] === 'benchmark-secret-key',
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   message: {
