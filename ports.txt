@@ -6,3 +6,5 @@ Ports
 4. 60005 - node-express-https-example
 5. 60006 - node-express-http2-example (HTTP/2)
 6. 60446 - node-express-http2-example (HTTPS)
+7. 60007 - node-express-http3-example (HTTP/3)
+8. 60447 - node-express-http3-example (HTTPS)

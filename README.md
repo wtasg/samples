@@ -76,6 +76,20 @@ A Node.js and Express web application running over HTTP/2 (TLS) and HTTPS co-exi
 
 For detailed setup, installation, and run instructions, refer to the [HTTP/2 & HTTPS Dual Express README](/node-express-http2-example/README.md).
 
+### 7. [HTTP/3 & HTTPS Dual Express Example](/node-express-http3-example/README.md)
+
+A Node.js and Express web application running over HTTP/3 (QUIC) and HTTPS:
+
+- Automatic SSL/TLS key and certificate generation on startup.
+- Endpoint `/heartbeat` to check server health and uptime.
+- Endpoint `/load` for query/response CPU load calculation.
+- Endpoint `/stream` to stream real-time CPU load using Server-Sent Events (SSE).
+- API rate limiting protecting endpoints (returning HTTP 429).
+- Premium system monitoring dark-mode dashboard visualizing CPU streams on a canvas chart and displaying connection protocol dynamically.
+
+For detailed setup, installation, and run instructions, refer to the [HTTP/3 & HTTPS Dual Express README](/node-express-http3-example/README.md).
+
+
 ## Ports Reference
 
 1. `60001` : [V8 + Go Integration Example](/v8-go-integration-example/README.md)
@@ -85,6 +99,8 @@ For detailed setup, installation, and run instructions, refer to the [HTTP/2 & H
 5. `60005` : [Secure Express CPU Monitor Example](/node-express-https-example/README.md)
 6. `60006` : [HTTP/2 & HTTPS Dual Express Example (HTTP/2)](/node-express-http2-example/README.md)
 7. `60446` : [HTTP/2 & HTTPS Dual Express Example (HTTPS fallback)](/node-express-http2-example/README.md)
+8. `60007` : [HTTP/3 & HTTPS Dual Express Example (HTTP/3)](/node-express-http3-example/README.md)
+9. `60447` : [HTTP/3 & HTTPS Dual Express Example (HTTPS fallback)](/node-express-http3-example/README.md)
 
 ## Docker Deployment
 
