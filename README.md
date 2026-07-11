@@ -50,12 +50,26 @@ A python Model Context Protocol (MCP) server implementing a dynamic plugin archi
 
 For detailed setup, installation, and run instructions, refer to the [MCP Command Server README](/py-mcp-ls-example/README.md).
 
+### 5. [Secure Express CPU Monitor Example](/node-express-https-example/README.md)
+
+A Node.js and Express web application running over HTTPS:
+
+- Automatic SSL/TLS key and certificate generation on startup.
+- Endpoint `/heartbeat` to check server health and uptime.
+- Endpoint `/api/cpu/load` for query/response CPU load calculation.
+- Endpoint `/api/cpu/stream` to stream real-time CPU load using Server-Sent Events (SSE).
+- API rate limiting protecting endpoints (returning HTTP 429).
+- Premium system monitoring dark-mode dashboard visualizing CPU streams on a canvas chart.
+
+For detailed setup, installation, and run instructions, refer to the [Secure Express CPU Monitor README](/node-express-https-example/README.md).
+
 ## Ports Reference
 
 1. `60001` : [V8 + Go Integration Example](/v8-go-integration-example/README.md)
 2. Desktop App: [Electron Canvas Studio](/electron-canvas-example/README.md) (Runs locally)
 3. `60003` : [Graphviz Flow](/dynamic-graphviz-svg-example/README.md)
 4. `60004` : [MCP Command Server](/py-mcp-ls-example/README.md)
+5. `60005` : [Secure Express CPU Monitor Example](/node-express-https-example/README.md)
 
 ## Docker Deployment
 
