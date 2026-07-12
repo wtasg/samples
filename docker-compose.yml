@@ -17,3 +17,27 @@ services:
     environment:
       - PORT=${GRAPHVIZ_FLOW_PORT}
       - HOST=0.0.0.0
+
+  toydb-server:
+    build:
+      context: .
+      dockerfile: ./rdbms-example/Dockerfile
+    ports:
+      - "${TOYDB_SERVER_PORT}:9090"
+    volumes:
+      - toydb-data:/app/data
+
+  toydb-client:
+    build:
+      context: .
+      dockerfile: ./rdbms-client-example/Dockerfile
+    ports:
+      - "${TOYDB_CLIENT_PORT}:8080"
+    environment:
+      - TOYDB_ADDR=http://toydb-server:9090
+      - PORT=8080
+    depends_on:
+      - toydb-server
+
+volumes:
+  toydb-data:

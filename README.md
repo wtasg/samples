@@ -138,6 +138,17 @@ A web application demonstrating Rust compiled to WebAssembly, running native-spe
 
 For detailed setup, installation, and run instructions, refer to the [WebAssembly Browser Explorer README](/wasm-browser-example/README.md).
 
+### 12. [ToyDB Studio](/rdbms-client-example/README.md)
+
+A web client interface and relational database daemon demonstrating pure Go implementation of database internals:
+
+- Exposes all operations over **Connect-RPC / gRPC** binary wire protocol.
+- Integrates all five custom data structures: **B+ Tree** (indexes), **Red-Black Tree** (sorting), **Trie** (catalog & prefix search), **Bloom Filter** (existence gate), and **Rabin-Karp** (rolling-hash search).
+- **Interactive web UI dashboard** built with clean HTML/CSS/JS that communicates via the `rdbms-client-lib` client library.
+- Supports writing query templates, executing SQL, viewing live table schemas, column metadata, primary key definitions, and execution runtimes in a responsive layout.
+
+For detailed setup, installation, and run instructions, refer to the [ToyDB Studio README](/rdbms-client-example/README.md).
+
 ## Ports Reference
 
 1. `60001` : [V8 + Go Integration Example](/v8-go-integration-example/README.md)
@@ -152,6 +163,9 @@ For detailed setup, installation, and run instructions, refer to the [WebAssembl
 10. `60008` : [WebSocket Live Dashboard](/node-express-websocket-example/README.md)
 11. `60009` : [gRPC Connect-Go Dashboard](/grpc-go-example/README.md)
 12. `60010` : [WebAssembly Browser Explorer](/wasm-browser-example/README.md)
+13. `60011` : [ToyDB Daemon Server (gRPC)](/rdbms-example/README.md)
+14. `60012` : [ToyDB Studio Web UI Client](/rdbms-client-example/README.md)
+
 
 ## Docker Deployment
 

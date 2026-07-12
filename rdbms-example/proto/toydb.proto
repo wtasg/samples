@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package toydb.v1;
+
+option go_package = "rdbms/gen/toydb/v1;toydbv1";
+
+// ─── ToyDB gRPC / Connect-RPC service ────────────────────────────────────────
+//
+// Wire protocol: Connect-RPC (binary protobuf) — compatible with standard
+// gRPC clients (HTTP/2 + protobuf) and gRPC-Web clients.
+//
+// All SQL is passed as plain strings; the server parser validates and executes.
+// This keeps the proto lean and lets the SQL surface evolve independently.
+service ToyDB {
+  // Execute runs any SQL statement (DDL or DML) and returns a result or status.
+  rpc Execute(ExecuteRequest) returns (ExecuteResponse);
+
+  // Query runs a SELECT and streams result rows back (suitable for large sets).
+  rpc Query(QueryRequest) returns (stream QueryStreamResponse);
+
+  // Ping verifies the server is alive and returns version info.
+  rpc Ping(PingRequest) returns (PingResponse);
+
+  // ListTables returns all table names known to the server.
+  rpc ListTables(ListTablesRequest) returns (ListTablesResponse);
+
+  // DescribeTable returns the schema of a single table.
+  rpc DescribeTable(DescribeTableRequest) returns (DescribeTableResponse);
+}
+
+// ── Value — a single typed column value ──────────────────────────────────────
+
+message Value {
+  oneof kind {
+    int64  int_val   = 1;
+    double float_val = 2;
+    string text_val  = 3;
+    bool   bool_val  = 4;
+  }
+  // is_null is true when the value is SQL NULL (no kind is set).
+  bool is_null = 10;
+}
+
+// ── Row — one result row, keyed by column name ────────────────────────────────
+
+message Row {
+  map<string, Value> values = 1;
+}
+
+// ── ResultSet — columns + rows ───────────────────────────────────────────────
+
+message ResultSet {
+  repeated string columns = 1;
+  repeated Row    rows    = 2;
+}
+
+// ── Execute ──────────────────────────────────────────────────────────────────
+
+message ExecuteRequest {
+  string sql = 1;
+}
+
+message ExecuteResponse {
+  bool      ok      = 1; // false when error != ""
+  string    message = 2; // e.g. "1 row inserted."
+  string    error   = 3; // non-empty on failure
+  ResultSet result  = 4; // populated for SELECT statements
+}
+
+// ── Query (streaming) ────────────────────────────────────────────────────────
+
+message QueryRequest {
+  string sql = 1;
+}
+
+// Sent for each row in the result stream.
+// First message also contains column names (columns field non-empty).
+message QueryStreamResponse {
+  repeated string columns = 1; // populated only in the first message
+  Row             row     = 2; // one row per message
+  string          error   = 3; // non-empty if an error occurred mid-stream
+}
+
+// ── Ping ─────────────────────────────────────────────────────────────────────
+
+message PingRequest {}
+
+message PingResponse {
+  string version    = 1; // "ToyDB 1.0"
+  string go_version = 2;
+  string data_dir   = 3;
+}
+
+// ── ListTables ───────────────────────────────────────────────────────────────
+
+message ListTablesRequest {}
+
+message ListTablesResponse {
+  repeated string tables = 1;
+}
+
+// ── DescribeTable ─────────────────────────────────────────────────────────────
+
+message DescribeTableRequest {
+  string table = 1;
+}
+
+message DescribeTableResponse {
+  string              table   = 1;
+  repeated ColumnDef  columns = 2;
+}
+
+message ColumnDef {
+  string name = 1;
+  string type = 2; // "INT", "TEXT", "FLOAT", "BOOL"
+  bool   primary_key = 3;
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToyDB Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-logo">
+            <span class="logo-box">T</span>
+            <h1>ToyDB Studio</h1>
+            <span class="badge">v1.0 (gRPC)</span>
+        </div>
+        <div class="db-status" id="db-status">
+            <span class="status-dot offline"></span>
+            <span class="status-text">Checking backend...</span>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <!-- Sidebar: Catalog/Schemas -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h2>Database Schema</h2>
+                <div class="table-list" id="table-list">
+                    <div class="empty-state">No tables found.</div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section templates">
+                <h2>Quick Templates</h2>
+                <button class="btn btn-secondary" onclick="loadTemplate('create')">CREATE TABLE</button>
+                <button class="btn btn-secondary" onclick="loadTemplate('insert')">INSERT VALUES</button>
+                <button class="btn btn-secondary" onclick="loadTemplate('select')">SELECT ALL</button>
+                <button class="btn btn-secondary" onclick="loadTemplate('filter')">WHERE + LIKE</button>
+                <button class="btn btn-secondary" onclick="loadTemplate('orderby')">ORDER BY</button>
+            </div>
+        </aside>
+
+        <!-- Main Content: Editor & Results -->
+        <main class="main-content">
+            <section class="editor-section card">
+                <div class="card-header">
+                    <h3>SQL Query Editor</h3>
+                    <div class="editor-actions">
+                        <button class="btn btn-primary" id="btn-run" onclick="runQuery()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                            Run Query
+                        </button>
+                    </div>
+                </div>
+                <div class="editor-wrapper">
+                    <textarea id="sql-editor" placeholder="Write SQL query here... (e.g. SELECT * FROM users;)"></textarea>
+                </div>
+            </section>
+
+            <section class="results-section card">
+                <div class="card-header">
+                    <h3>Query Results</h3>
+                    <span class="exec-time" id="exec-time"></span>
+                </div>
+                <div class="results-wrapper">
+                    <div class="message-banner" id="status-message">Enter a SQL query above and click "Run Query" to execute.</div>
+                    <div class="table-scroll" id="table-container" style="display: none;">
+                        <table class="data-table" id="data-table">
+                            <thead>
+                                <tr id="table-header"></tr>
+                            </thead>
+                            <tbody id="table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
