@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package docdb.v1;
+
+option go_package = "docdb/gen/docdb/v1;docdbv1";
+
+// ─── DocDB gRPC / Connect-RPC service ────────────────────────────────────────
+//
+// Wire protocol: Connect-RPC (binary protobuf) — compatible with standard
+// gRPC clients (HTTP/2 + protobuf) and gRPC-Web clients.
+//
+// All query/update commands are passed as plain strings; the server parser
+// validates and executes.
+service DocDB {
+  // Execute runs any DocDB statement (create/drop collection, insert, update, delete)
+  // and returns a result or status.
+  rpc Execute(ExecuteRequest) returns (ExecuteResponse);
+
+  // Query runs a find query and streams document results back.
+  rpc Query(QueryRequest) returns (stream QueryStreamResponse);
+
+  // Ping verifies the server is alive and returns version info.
+  rpc Ping(PingRequest) returns (PingResponse);
+
+  // ListCollections returns all collection names known to the server.
+  rpc ListCollections(ListCollectionsRequest) returns (ListCollectionsResponse);
+
+  // DescribeCollection returns the metadata/statistics of a single collection.
+  rpc DescribeCollection(DescribeCollectionRequest) returns (DescribeCollectionResponse);
+}
+
+// ── Value ──
+message Value {
+  oneof kind {
+    int64  int_val   = 1;
+    double float_val = 2;
+    string text_val  = 3;
+    bool   bool_val  = 4;
+  }
+  bool is_null = 10;
+}
+
+// ── Document ──
+message Document {
+  map<string, Value> fields = 1;
+}
+
+// ── Execute ──
+message ExecuteRequest {
+  string command = 1;
+}
+
+message ExecuteResponse {
+  bool              ok       = 1;
+  string            message  = 2;
+  string            error    = 3;
+  repeated Document docs     = 4; // populated for find commands if non-streaming
+}
+
+// ── Query (streaming) ──
+message QueryRequest {
+  string command = 1;
+}
+
+message QueryStreamResponse {
+  Document doc   = 1;
+  string   error = 2;
+}
+
+// ── Ping ──
+message PingRequest {}
+
+message PingResponse {
+  string version    = 1; // "DocDB 1.0"
+  string go_version = 2;
+  string data_dir   = 3;
+}
+
+// ── ListCollections ──
+message ListCollectionsRequest {}
+
+message ListCollectionsResponse {
+  repeated string collections = 1;
+}
+
+// ── DescribeCollection ──
+message DescribeCollectionRequest {
+  string collection = 1;
+}
+
+message DescribeCollectionResponse {
+  string collection = 1;
+  int64  doc_count  = 2;
+  int64  size_bytes = 3;
+}

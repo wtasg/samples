@@ -14,3 +14,5 @@ Ports
 12. 60010 - wasm-browser-example (HTTP)
 13. 60011 - toydb-server (gRPC Connect-RPC)
 14. 60012 - toydb-client-app (Web UI)
+15. 60013 - docdb-server (gRPC Connect-RPC)
+16. 60014 - docdb-client-app (Web UI)

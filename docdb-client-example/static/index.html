@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocDB Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-logo">
+            <span class="logo-box">D</span>
+            <h1>DocDB Studio</h1>
+            <span class="badge">v1.0 (NoSQL Connect-RPC)</span>
+        </div>
+        <div class="db-status" id="db-status">
+            <span class="status-dot offline"></span>
+            <span class="status-text">Checking backend...</span>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <!-- Sidebar: Catalog/Collections -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h2>Collections</h2>
+                <div class="collection-list" id="collection-list">
+                    <div class="empty-state">No collections found.</div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section templates">
+                <h2>Quick Templates</h2>
+                <button class="btn btn-secondary" onclick="loadTemplate('create')">db.createCollection()</button>
+                <button class="btn btn-secondary" onclick="loadTemplate('insert')">db.collection.insert()</button>
+                <button class="btn btn-secondary" onclick="loadTemplate('find')">db.collection.find()</button>
+                <button class="btn btn-secondary" onclick="loadTemplate('filter')">db.collection.find(filter)</button>
+                <button class="btn btn-secondary" onclick="loadTemplate('sort')">db.collection.sort()</button>
+            </div>
+        </aside>
+
+        <!-- Main Content: Editor & Results -->
+        <main class="main-content">
+            <section class="editor-section card">
+                <div class="card-header">
+                    <h3>Command Editor</h3>
+                    <div class="editor-actions">
+                        <button class="btn btn-primary" id="btn-run" onclick="runQuery()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                            Run Command
+                        </button>
+                    </div>
+                </div>
+                <div class="editor-wrapper">
+                    <textarea id="command-editor" placeholder="Write DocDB command here... (e.g. db.products.find({});)"></textarea>
+                </div>
+            </section>
+
+            <section class="results-section card">
+                <div class="card-header">
+                    <h3>Documents Output</h3>
+                    <div class="header-right">
+                        <div class="view-toggle" id="view-toggle" style="display: none;">
+                            <button class="toggle-btn active" id="btn-json-view" onclick="setViewMode('json')">JSON</button>
+                            <button class="toggle-btn" id="btn-table-view" onclick="setViewMode('table')">Table</button>
+                        </div>
+                        <span class="exec-time" id="exec-time"></span>
+                    </div>
+                </div>
+                <div class="results-wrapper">
+                    <div class="message-banner" id="status-message">Enter a DocDB command above and click "Run Command" to execute.</div>
+                    
+                    <!-- JSON view mode -->
+                    <div class="json-scroll" id="json-container" style="display: none;">
+                        <pre id="json-output"><code class="language-json"></code></pre>
+                    </div>
+
+                    <!-- Table view mode -->
+                    <div class="table-scroll" id="table-container" style="display: none;">
+                        <table class="data-table" id="data-table">
+                            <thead>
+                                <tr id="table-header"></tr>
+                            </thead>
+                            <tbody id="table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

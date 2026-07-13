@@ -89,6 +89,10 @@ toydb> \q
 
 > The **first column must be INT** — it is the primary key used by all indexes.
 
+### Multi-Statement Blocks
+
+Both the CLI and gRPC server support executing multiple SQL queries separated by semicolons (`;`) in a single query string. This is useful for executing multiple `INSERT` statements or scripts (such as those populated by UI templates). The engine splits them on semicolons at depth 0, executing each sequentially, and returning the aggregated outputs.
+
 ## Data Structures
 
 | Structure | File | Role |
@@ -143,6 +147,7 @@ go test ./...                   # full test suite
 ## Persistence
 
 Data is stored in the `data/` directory (created automatically):
+
 ```
 data/
 ├── catalog.json          # table schemas (JSON)
@@ -177,6 +182,7 @@ go run ./cmd/server --addr :9090 --data ./mydata
 ```
 
 The server speaks **three protocols on the same port** (no separate config needed):
+
 - **gRPC** — binary protobuf over HTTP/2 (compatible with any gRPC client)
 - **Connect** — binary or JSON over HTTP/1.1 or HTTP/2
 - **gRPC-Web** — binary protobuf over HTTP/1.1
