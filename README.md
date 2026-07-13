@@ -149,6 +149,17 @@ A web client interface and relational database daemon demonstrating pure Go impl
 
 For detailed setup, installation, and run instructions, refer to the [ToyDB Studio README](/rdbms-client-example/README.md).
 
+### 13. [DocDB Studio](/docdb-client-example/README.md)
+
+A web client interface and NoSQL document database daemon demonstrating pure Go implementation of document database internals:
+
+- Exposes all operations over **Connect-RPC / gRPC** binary wire protocol.
+- Integrates all five custom data structures: **LSM Tree** (storage engine), **Hash Map** (O(1) ID lookup), **Skip List** (memtable & sorting), **Bloom Filter** (per-SST lookup gate), and **Inverted Index** (secondary field index).
+- **Interactive web UI dashboard** built with clean HTML/CSS/JS that communicates via the `github.com/docdb/client` client library.
+- Supports writing query templates, executing Javascript-style command pipelines, viewing live collections, document counts, database sizes, and toggling between formatted JSON or flattened table views.
+
+For detailed setup, installation, and run instructions, refer to the [DocDB Studio README](/docdb-client-example/README.md).
+
 ## Ports Reference
 
 1. `60001` : [V8 + Go Integration Example](/v8-go-integration-example/README.md)
@@ -165,6 +176,8 @@ For detailed setup, installation, and run instructions, refer to the [ToyDB Stud
 12. `60010` : [WebAssembly Browser Explorer](/wasm-browser-example/README.md)
 13. `60011` : [ToyDB Daemon Server (gRPC)](/rdbms-example/README.md)
 14. `60012` : [ToyDB Studio Web UI Client](/rdbms-client-example/README.md)
+15. `60013` : [DocDB Daemon Server (gRPC)](/docdb-example/README.md)
+16. `60014` : [DocDB Studio Web UI Client](/docdb-client-example/README.md)
 
 
 ## Docker Deployment

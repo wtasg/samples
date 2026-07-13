@@ -12,6 +12,7 @@ import (
 	"context"
 	"fmt"
 	"runtime"
+	"strings"
 
 	"connectrpc.com/connect"
 
@@ -42,31 +43,51 @@ func (s *Service) Execute(
 	req *connect.Request[toydbv1.ExecuteRequest],
 ) (*connect.Response[toydbv1.ExecuteResponse], error) {
 
-	stmt, err := parser.Parse(req.Msg.Sql)
-	if err != nil {
-		return connect.NewResponse(&toydbv1.ExecuteResponse{
-			Ok:    false,
-			Error: fmt.Sprintf("parse error: %v", err),
-		}), nil
-	}
-	if stmt == nil {
+	stmts := SplitStatements(req.Msg.Sql)
+	if len(stmts) == 0 {
 		return connect.NewResponse(&toydbv1.ExecuteResponse{Ok: true}), nil
 	}
 
-	result, err := s.ex.Execute(stmt)
-	if err != nil {
-		return connect.NewResponse(&toydbv1.ExecuteResponse{
-			Ok:    false,
-			Error: err.Error(),
-		}), nil
+	var lastMessage string
+	var lastResult *toydbv1.ResultSet
+
+	for _, stmtStr := range stmts {
+		stmt, err := parser.Parse(stmtStr)
+		if err != nil {
+			return connect.NewResponse(&toydbv1.ExecuteResponse{
+				Ok:    false,
+				Error: fmt.Sprintf("parse error on %q: %v", stmtStr, err),
+			}), nil
+		}
+		if stmt == nil {
+			continue
+		}
+
+		result, err := s.ex.Execute(stmt)
+		if err != nil {
+			return connect.NewResponse(&toydbv1.ExecuteResponse{
+				Ok:    false,
+				Error: err.Error(),
+			}), nil
+		}
+
+		if result != nil {
+			if result.Message != "" {
+				if lastMessage != "" {
+					lastMessage += "\n"
+				}
+				lastMessage += result.Message
+			}
+			if len(result.Columns) > 0 {
+				lastResult = encodeResultSet(result)
+			}
+		}
 	}
 
 	resp := &toydbv1.ExecuteResponse{
 		Ok:      true,
-		Message: result.Message,
-	}
-	if len(result.Columns) > 0 {
-		resp.Result = encodeResultSet(result)
+		Message: lastMessage,
+		Result:  lastResult,
 	}
 	return connect.NewResponse(resp), nil
 }
@@ -79,37 +100,39 @@ func (s *Service) Query(
 	stream *connect.ServerStream[toydbv1.QueryStreamResponse],
 ) error {
 
-	stmt, err := parser.Parse(req.Msg.Sql)
-	if err != nil {
-		return stream.Send(&toydbv1.QueryStreamResponse{
-			Error: fmt.Sprintf("parse error: %v", err),
-		})
-	}
-	if stmt == nil {
-		return nil
-	}
-
-	result, err := s.ex.Execute(stmt)
-	if err != nil {
-		return stream.Send(&toydbv1.QueryStreamResponse{Error: err.Error()})
-	}
-	if result == nil || len(result.Columns) == 0 {
-		// DDL / DML — nothing to stream.
-		return nil
-	}
-
-	// First message carries column names.
-	first := true
-	for _, row := range result.Rows {
-		msg := &toydbv1.QueryStreamResponse{
-			Row: encodeRow(row, result.Columns),
+	stmts := SplitStatements(req.Msg.Sql)
+	for _, stmtStr := range stmts {
+		stmt, err := parser.Parse(stmtStr)
+		if err != nil {
+			return stream.Send(&toydbv1.QueryStreamResponse{
+				Error: fmt.Sprintf("parse error on %q: %v", stmtStr, err),
+			})
 		}
-		if first {
-			msg.Columns = result.Columns
-			first = false
+		if stmt == nil {
+			continue
 		}
-		if err := stream.Send(msg); err != nil {
-			return err
+
+		result, err := s.ex.Execute(stmt)
+		if err != nil {
+			return stream.Send(&toydbv1.QueryStreamResponse{Error: err.Error()})
+		}
+		if result == nil || len(result.Columns) == 0 {
+			continue
+		}
+
+		// First message for this statement carries column names.
+		first := true
+		for _, row := range result.Rows {
+			msg := &toydbv1.QueryStreamResponse{
+				Row: encodeRow(row, result.Columns),
+			}
+			if first {
+				msg.Columns = result.Columns
+				first = false
+			}
+			if err := stream.Send(msg); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -206,4 +229,61 @@ func encodeValue(v any) *toydbv1.Value {
 	default:
 		return &toydbv1.Value{Kind: &toydbv1.Value_TextVal{TextVal: fmt.Sprintf("%v", v)}}
 	}
+}
+
+// SplitStatements splits multiple SQL queries by semicolon, ignoring semicolons
+// within quotes and parentheses.
+func SplitStatements(input string) []string {
+	var stmts []string
+	var current strings.Builder
+	inSingleQuote := false
+	inDoubleQuote := false
+	depth := 0
+
+	for i := 0; i < len(input); i++ {
+		ch := input[i]
+
+		// Handle escape
+		if ch == '\\' && i+1 < len(input) {
+			current.WriteByte(ch)
+			current.WriteByte(input[i+1])
+			i++
+			continue
+		}
+
+		switch ch {
+		case '\'':
+			if !inDoubleQuote {
+				inSingleQuote = !inSingleQuote
+			}
+		case '"':
+			if !inSingleQuote {
+				inDoubleQuote = !inDoubleQuote
+			}
+		case '(', '{', '[':
+			if !inSingleQuote && !inDoubleQuote {
+				depth++
+			}
+		case ')', '}', ']':
+			if !inSingleQuote && !inDoubleQuote {
+				depth--
+			}
+		case ';':
+			if !inSingleQuote && !inDoubleQuote && depth == 0 {
+				stmt := strings.TrimSpace(current.String())
+				if stmt != "" {
+					stmts = append(stmts, stmt)
+				}
+				current.Reset()
+				continue
+			}
+		}
+		current.WriteByte(ch)
+	}
+
+	stmt := strings.TrimSpace(current.String())
+	if stmt != "" {
+		stmts = append(stmts, stmt)
+	}
+	return stmts
 }

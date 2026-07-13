@@ -39,5 +39,27 @@ services:
     depends_on:
       - toydb-server
 
+  docdb-server:
+    build:
+      context: .
+      dockerfile: ./docdb-example/Dockerfile
+    ports:
+      - "${DOCDB_SERVER_PORT}:60013"
+    volumes:
+      - docdb-data:/app/data
+
+  docdb-client:
+    build:
+      context: .
+      dockerfile: ./docdb-client-example/Dockerfile
+    ports:
+      - "${DOCDB_CLIENT_PORT}:8080"
+    environment:
+      - DOCDB_ADDR=http://docdb-server:60013
+      - PORT=8080
+    depends_on:
+      - docdb-server
+
 volumes:
   toydb-data:
+  docdb-data:
