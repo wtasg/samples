@@ -160,6 +160,17 @@ A web client interface and NoSQL document database daemon demonstrating pure Go 
 
 For detailed setup, installation, and run instructions, refer to the [DocDB Studio README](/docdb-client-example/README.md).
 
+### 14. [Docker Sidecar Observability Example](/docker-sidecar-example/README.md)
+
+A multi-container Docker example demonstrating the sidecar pattern for observability:
+
+- **Nginx Proxy Sidecar**: Shares the network namespace of the Go application, acting as the external ingress endpoint (`60015`).
+- **Prometheus Scraper Sidecar**: Shares the network namespace of the Go application, scraping metrics from `localhost` and exposing its UI on `60016`.
+- **Fluent Bit Logging Sidecar**: Tails log files in a shared Docker volume, parsing and outputting enriched logs to console/stdout.
+- **Grafana Dashboard**: Preconfigured monitoring dashboard listening on `60017` connecting to Prometheus.
+
+For detailed setup, installation, and run instructions, refer to the [Docker Sidecar Observability README](/docker-sidecar-example/README.md).
+
 ## Ports Reference
 
 1. `60001` : [V8 + Go Integration Example](/v8-go-integration-example/README.md)
@@ -178,6 +189,9 @@ For detailed setup, installation, and run instructions, refer to the [DocDB Stud
 14. `60012` : [ToyDB Studio Web UI Client](/rdbms-client-example/README.md)
 15. `60013` : [DocDB Daemon Server (gRPC)](/docdb-example/README.md)
 16. `60014` : [DocDB Studio Web UI Client](/docdb-client-example/README.md)
+17. `60015` : [Docker Sidecar Example (Nginx Ingress)](/docker-sidecar-example/README.md)
+18. `60016` : [Docker Sidecar Example (Prometheus UI)](/docker-sidecar-example/README.md)
+19. `60017` : [Docker Sidecar Example (Grafana Dashboard)](/docker-sidecar-example/README.md)
 
 
 ## Docker Deployment

@@ -16,3 +16,6 @@ Ports
 14. 60012 - toydb-client-app (Web UI)
 15. 60013 - docdb-server (gRPC Connect-RPC)
 16. 60014 - docdb-client-app (Web UI)
+17. 60015 - docker-sidecar-example (HTTP entrypoint / Nginx Proxy)
+18. 60016 - docker-sidecar-example (Prometheus UI)
+19. 60017 - docker-sidecar-example (Grafana Dashboard)

@@ -1,0 +1,47 @@
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    ports:
+      - "60015:80" # Mapped for Nginx Proxy Sidecar (port 80 inside the shared network namespace)
+      - "60016:9090" # Mapped for Prometheus Sidecar (port 9090 inside the shared network namespace)
+    volumes:
+      - shared-logs:/var/log/app
+
+  proxy-sidecar:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    network_mode: "service:app"
+    depends_on:
+      - app
+
+  prometheus-sidecar:
+    build:
+      context: ./prometheus
+      dockerfile: Dockerfile
+    network_mode: "service:app"
+    depends_on:
+      - app
+
+  logging-sidecar:
+    build:
+      context: ./logging
+      dockerfile: Dockerfile
+    volumes:
+      - shared-logs:/var/log/app
+    depends_on:
+      - app
+
+  grafana:
+    build:
+      context: ./grafana
+      dockerfile: Dockerfile
+    ports:
+      - "60017:3000"
+    depends_on:
+      - app
+
+volumes:
+  shared-logs:

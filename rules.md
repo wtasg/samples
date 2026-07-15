@@ -9,3 +9,4 @@
 7. Test and verify the code.
 8. Document changes properly in root readme and in the project readme.
 9. Build arch.md if needed. Use plantuml and mermaidjs code blocks for diagrams.
+10. Instead of empty code blocs, use text as code block type/hint.
